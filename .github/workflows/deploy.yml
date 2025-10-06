@@ -43,3 +43,5 @@ jobs:
         run: |
           kubectl set image deployment/$IMAGE_NAME $IMAGE_NAME=$ACR_NAME.azurecr.io/$IMAGE_NAME:${{ env.IMAGE_TAG }}
           kubectl rollout status deployment/$IMAGE_NAME
+
+          
