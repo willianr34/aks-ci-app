@@ -8,7 +8,7 @@ on:
 env:
   AZURE_RESOURCE_GROUP: rg-parcial
   AZURE_AKS_CLUSTER: aks-parcial
-  ACR_NAME: acrparcial
+  ACR_NAME: acrparcial7869
   IMAGE_NAME: aks-ci-app
 
 jobs:
@@ -23,6 +23,15 @@ jobs:
         uses: azure/login@v1
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Ensure Azure Container Registry exists
+        run: |
+          if ! az acr show --name $ACR_NAME --resource-group $AZURE_RESOURCE_GROUP > /dev/null 2>&1; then
+            echo "Creating Azure Container Registry $ACR_NAME..."
+            az acr create --resource-group $AZURE_RESOURCE_GROUP --name $ACR_NAME --sku Basic --admin-enabled true
+          else
+            echo "ACR $ACR_NAME already exists."
+          fi
 
       - name: Log in to Azure Container Registry
         run: |
@@ -43,5 +52,3 @@ jobs:
         run: |
           kubectl set image deployment/$IMAGE_NAME $IMAGE_NAME=$ACR_NAME.azurecr.io/$IMAGE_NAME:${{ env.IMAGE_TAG }}
           kubectl rollout status deployment/$IMAGE_NAME
-
-          
