@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: aks-ci-app
+  labels:
+    app: aks-ci-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: aks-ci-app
+  template:
+    metadata:
+      labels:
+        app: aks-ci-app
+    spec:
+      containers:
+      - name: aks-ci-app
+        image: acrparcial7869.azurecr.io/aks-ci-app:latest
+        ports:
+        - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: aks-ci-app-service
+spec:
+  type: LoadBalancer
+  selector:
+    app: aks-ci-app
+  ports:
+  - port: 80
+    targetPort: 80
